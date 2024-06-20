@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UserDetails;
 import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.swiftrecruit.usermanagement.config.JwtRequestFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +28,9 @@ public class SpringSecurity {
 
         @Autowired
         private UserDetailsService userDetailsService;
+
+        @Autowired
+        private JwtRequestFilter jwtRequestFilter;
 
         @Bean
         public static PasswordEncoder passwordEncoder() {
@@ -43,8 +50,10 @@ public class SpringSecurity {
                                                 .requestMatchers(HttpMethod.OPTIONS, "/").permitAll()
                                                 .requestMatchers("/api/users/index").permitAll()
                                                 .requestMatchers("/api/users/register").permitAll()
+                                                .requestMatchers("/api/users/login").permitAll()
                                                 .anyRequest().authenticated())
-
+                                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();
 
         }
@@ -91,6 +100,11 @@ public class SpringSecurity {
                                 .build();
 
                 return new InMemoryUserDetailsManager(user, admin);
+        }
+
+        @Bean
+        public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
+                return http.getSharedObject(AuthenticationManagerBuilder.class).build();
         }
 
 }

@@ -18,14 +18,20 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    // private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
-            RoleRepository roleRepository) {
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        // this.passwordEncoder = passwordEncoder;
-        // PasswordEncoder passwordEncoder
+        this.passwordEncoder = passwordEncoder;
+
+    }
+
+    public boolean authenticateUser(String email, String password) {
+        User user = findUserByEmail(email);
+        return user != null && passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -35,8 +41,8 @@ public class UserServiceImpl implements UserService {
         user.setName(userDto.getFirstName() + " " + userDto.getLastName());
         user.setEmail(userDto.getEmail());
         // encrypt the password using spring security
-        user.setPassword(userDto.getPassword());
-        // user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        // user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         Role role = roleRepository.findByName("ROLE_ADMIN");
         if (role == null) {

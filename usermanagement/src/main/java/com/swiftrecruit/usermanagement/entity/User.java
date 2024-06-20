@@ -17,6 +17,7 @@ import java.util.List;
 @Table(name = "users")
 public class User {
 
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     @Id
