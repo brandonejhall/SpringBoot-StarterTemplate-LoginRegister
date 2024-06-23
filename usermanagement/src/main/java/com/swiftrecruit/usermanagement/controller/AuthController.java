@@ -1,5 +1,8 @@
 package com.swiftrecruit.usermanagement.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import com.swiftrecruit.usermanagement.config.ApiResponse;
@@ -73,7 +76,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> loginUser(@Valid @RequestBody LoginDto loginRequest) {
+    public ResponseEntity<ApiResponse> loginUser(@Valid @RequestBody LoginDto loginRequest,
+            HttpServletResponse response) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -81,12 +85,32 @@ public class AuthController {
             final UserDetails userDetails = custUserService.loadUserByUsername(loginRequest.getEmail());
             final String jwt = jwtUtil.generateToken(userDetails);
 
-            ApiResponse response = new ApiResponse(jwt, HttpStatus.OK.value());
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            Cookie jwtCookie = new Cookie("JWT-TOKEN", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(true); // Set to true if using HTTPS
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+            response.addCookie(jwtCookie);
+
+            ApiResponse apiResponse = new ApiResponse(jwt, HttpStatus.OK.value());
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (AuthenticationException e) {
-            ApiResponse response = new ApiResponse("Invalid email or password", HttpStatus.UNAUTHORIZED.value());
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            ApiResponse apiResponse = new ApiResponse("Invalid email or password", HttpStatus.UNAUTHORIZED.value());
+            return new ResponseEntity<>(apiResponse, HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie jwtCookie = new Cookie("JWT-TOKEN", null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true); // Set to true if using HTTPS
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Clear the cookie
+        response.addCookie(jwtCookie);
+
+        ApiResponse apiResponse = new ApiResponse("Logout successful", HttpStatus.OK.value());
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     // handler method to handle list of users
