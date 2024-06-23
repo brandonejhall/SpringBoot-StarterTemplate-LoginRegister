@@ -83,18 +83,4 @@ Include the JWT token stored in the JWT_TOKEN cookie in your requests. The appli
 
 The application properties can be configured in `src/main/resources/application.properties`. By default, it uses an H2 in-memory database. To switch to another database, update the relevant properties.
 
-## Contributing
 
-Contributions are welcome! Please fork the repository and create a pull request with your changes.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For any questions or feedback, please contact [your email](mailto:your.email@example.com).
-
----
-
-Enjoy building with Spring Boot!
