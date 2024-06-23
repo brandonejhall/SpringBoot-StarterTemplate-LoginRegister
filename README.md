@@ -1,185 +1,100 @@
+# SpringBoot-StarterTemplate-LoginRegister
 
-
-# Swift Recruit - Monolithic Architecture
-
-This repository contains the source code for a Recruitment Platform initially built as a monolithic application using Spring Boot. The platform is designed to handle various functionalities related to user management, job postings, applications, interview scheduling, notifications, feedback, evaluations, analytics, and file storage.
-
-## Table of Contents
-
-- [Project Structure](#project-structure)
-- [Features](#features)
-- [Endpoints](#endpoints)
-- [Getting Started](#getting-started)
-- [Building and Running](#building-and-running)
-- [Configuration](#configuration)
-- [Testing](#testing)
-- [Future Plans](#future-plans)
-
-## Project Structure
-
-The project is organized into packages representing different services:
-
-```
-src/main/java/com/example/recruitment
-|-- analytics
-|-- application
-|-- config
-|-- feedback
-|-- filestorage
-|-- interview
-|-- jobposting
-|-- notification
-|-- usermanagement
-```
-
-Each package contains the necessary controllers, services, repositories, and entities.
+A Spring Boot starter template for implementing a basic login and registration system. This project aims to provide a simple, easy-to-use starting point for developing secure user authentication and management functionalities in a Spring Boot application.
 
 ## Features
 
-- **User Management**: Register, login, logout, manage profiles, reset passwords, and change user roles.
-- **Job Posting**: Create, update, delete, and retrieve job postings.
-- **Application Management**: Submit, update, delete, and retrieve job applications.
-- **Interview Scheduling**: Schedule interviews, manage interview slots.
-- **Notification**: Send email and SMS notifications.
-- **Feedback and Evaluation**: Submit and manage feedback and evaluations.
-- **Analytics**: Retrieve analytics data and generate reports.
-- **File Storage**: Upload, download, and delete files.
+- User registration with validation
+- User login with JWT authentication
+- Password encryption using BCrypt
+- Role-based access control
+- Secure REST API endpoints
+- Integration with H2 database (can be switched to other databases)
+- Comprehensive error handling
+- Basic user profile management
 
-## Endpoints
+## Technologies Used
 
-### User Management Service
-
-- `POST /user/register`: Register a new user
-- `POST /user/login`: Log in an existing user
-- `POST /user/logout`: Log out an existing user
-- `GET /user/profile`: Get user profile information
-- `PUT /user/profile`: Update user profile information
-- `POST /user/reset-password`: Reset user password
-- `POST /user/change-role`: Change user role
-
-### Job Posting Service
-
-- `POST /jobs`: Create a new job posting
-- `GET /jobs`: Get a list of job postings
-- `GET /jobs/{id}`: Get a specific job posting by ID
-- `PUT /jobs/{id}`: Update a job posting by ID
-- `DELETE /jobs/{id}`: Delete a job posting by ID
-- `GET /jobs/{id}/link`: Get the application link for a job posting
-
-### Application Service
-
-- `POST /applications`: Submit a new application
-- `GET /applications`: Get a list of applications
-- `GET /applications/{id}`: Get a specific application by ID
-- `PUT /applications/{id}`: Update an application by ID
-- `DELETE /applications/{id}`: Delete an application by ID
-
-### Interview Scheduling Service
-
-- `POST /schedules`: Create a new interview schedule
-- `GET /schedules`: Get a list of interview schedules
-- `GET /schedules/{id}`: Get a specific interview schedule by ID
-- `PUT /schedules/{id}`: Update an interview schedule by ID
-- `DELETE /schedules/{id}`: Delete an interview schedule by ID
-- `POST /schedules/{id}/slots`: Add interview slots to a schedule
-- `GET /schedules/{id}/slots`: Get available interview slots for a schedule
-
-### Notification Service
-
-- `POST /notifications/email`: Send an email notification
-- `POST /notifications/sms`: Send an SMS notification
-- `GET /notifications/templates`: Get a list of notification templates
-- `PUT /notifications/templates/{id}`: Update a notification template by ID
-- `DELETE /notifications/templates/{id}`: Delete a notification template by ID
-
-### Feedback and Evaluation Service
-
-- `POST /feedback`: Submit feedback for an interview
-- `GET /feedback`: Get a list of feedback submissions
-- `GET /feedback/{id}`: Get a specific feedback submission by ID
-- `PUT /feedback/{id}`: Update a feedback submission by ID
-- `DELETE /feedback/{id}`: Delete a feedback submission by ID
-- `POST /evaluations`: Create a new evaluation for an application
-- `GET /evaluations`: Get a list of evaluations
-- `GET /evaluations/{id}`: Get a specific evaluation by ID
-- `PUT /evaluations/{id}`: Update an evaluation by ID
-- `DELETE /evaluations/{id}`: Delete an evaluation by ID
-
-### Analytics Service
-
-- `GET /analytics`: Get general analytics information
-- `GET /analytics/metrics`: Get specific analytics metrics
-- `GET /analytics/reports`: Get analytics reports
-- `POST /analytics/reports`: Generate a new analytics report
-
-### File Storage Service
-
-- `POST /files`: Upload a file
-- `GET /files/{id}`: Download a file by ID
-- `DELETE /files/{id}`: Delete a file by ID
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- H2 Database
+- JWT (JSON Web Tokens)
+- Maven
 
 ## Getting Started
 
 ### Prerequisites
 
 - Java 11 or higher
-- Maven 3.6 or higher
-- PostgreSQL (or any preferred database)
+- Maven 3.6.0 or higher
 
 ### Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/recruitment-platform.git
-    cd recruitment-platform
-    ```
+   ```bash
+   git clone https://github.com/yourusername/SpringBoot-StarterTemplate-LoginRegister.git
+   cd SpringBoot-StarterTemplate-LoginRegister
+   ```
 
-2. Configure the database settings in `src/main/resources/application.yml`:
+2. Build the project:
+   ```bash
+   mvn clean install
+   ```
 
-    ```yaml
-    spring:
-      datasource:
-        url: jdbc:postgresql://localhost:5432/recruitment
-        username: yourusername
-        password: yourpassword
-      jpa:
-        hibernate:
-          ddl-auto: update
-        show-sql: true
-    ```
+3. Run the application:
+   ```bash
+   mvn spring-boot:run
+   ```
 
-3. Build the project using Maven:
-    ```bash
-    mvn clean install
-    ```
+4. Access the application at `http://localhost:8080`
 
-## Building and Running
+## Usage
 
-Run the Spring Boot application:
+### Register a new user
 
-```bash
-mvn spring-boot:run
+Send a POST request to `/api/auth/register` with the following JSON payload:
+```json
+{
+    "firstName": "FirstName",
+    "lastName": "LastName",
+    "password": "yourPassword",
+    "email": "yourEmail@example.com"
+}
 ```
+
+### Login
+
+Send a POST request to `/api/auth/login` with the following JSON payload:
+```json
+{
+    "email": "Email",
+    "password": "yourPassword"
+}
+```
+
+The response will contain a JWT token which should be used to authenticate subsequent requests.
+
+### Accessing secured endpoints
+
+Include the JWT token stored in the JWT_TOKEN cookie in your requests. The application will automatically read the token from the cookie to authenticate the user.
 
 ## Configuration
 
-Configure application-specific settings in `src/main/resources/application.yml`.
+The application properties can be configured in `src/main/resources/application.properties`. By default, it uses an H2 in-memory database. To switch to another database, update the relevant properties.
 
-## Testing
+## Contributing
 
-Run unit and integration tests using Maven:
+Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
-```bash
-mvn test
-```
+## License
 
-## Future Plans
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-- Transition to a microservices architecture.
-- Implement service discovery using Eureka.
-- Introduce API gateway using Spring Cloud Gateway.
-- Split the database into separate databases for each microservice.
-- Enhance security measures (OAuth2, JWT, etc.).
+## Contact
+
+For any questions or feedback, please contact [your email](mailto:your.email@example.com).
 
 ---
 
+Enjoy building with Spring Boot!
