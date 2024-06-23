@@ -28,6 +28,7 @@ A Spring Boot starter template for implementing a basic login and registration s
 
 - Java 11 or higher
 - Maven 3.6.0 or higher
+- MySQL 5.7 or higher
 
 ### Installation
 
@@ -81,6 +82,6 @@ Include the JWT token stored in the JWT_TOKEN cookie in your requests. The appli
 
 ## Configuration
 
-The application properties can be configured in `src/main/resources/application.properties`. By default, it uses an H2 in-memory database. To switch to another database, update the relevant properties.
+The application properties can be configured in src/main/resources/application.properties. By default, it uses a MySQL database. Ensure you have the correct database configuration properties set.
 
 
